@@ -2,7 +2,12 @@
 #define COM_H
 
 #include <Arduino.h>
+
+#if USE_AS32_MODULE
+#include "AS32_Driver.h"
+#else
 #include <LoRa_E32.h>
+#endif
 
 class PTIT_COM {
 public:
@@ -19,7 +24,11 @@ public:
     bool setTransmissionMode(uint8_t mode);
 
 private:
+#if USE_AS32_MODULE
+    AS32_Driver as32;
+#else
     LoRa_E32 e32;
+#endif
 };
 
 #endif
