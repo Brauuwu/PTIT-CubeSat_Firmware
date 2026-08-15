@@ -20,7 +20,6 @@ Dành cho các cảm biến MPU6050 (Gia tốc & Góc quay), BMP280 (Nhiệt đ�
 ### 3. Phân hệ Định vị GPS NEO (UART2)
 - **ESP32 TX2 (Chân 17)** -> RX của GPS
 - **ESP32 RX2 (Chân 16)** -> TX của GPS
-- **ESP32 Chân 4** -> Xung PPS của GPS
 
 ### 4. Phân hệ Viễn thông LoRa E32 (UART1 Remap)
 - **ESP32 TX (Chân 25)** -> RX của LoRa

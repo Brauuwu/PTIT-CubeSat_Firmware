@@ -1,17 +1,11 @@
 #include "GPS.h"
 
-volatile bool ppsTriggered = false;
-void IRAM_ATTR ppsHandler() { ppsTriggered = true; }
-
 PTIT_GPS::PTIT_GPS() : gpsSerial(2) {
 }
 
 void PTIT_GPS::init() {
     Serial.println("[GPS] Initializing GPS NEO (UART2)...");
     gpsSerial.begin(9600, SERIAL_8N1, 16, 17); // RX2=16, TX2=17
-    
-    pinMode(4, INPUT_PULLDOWN); // PPS=4
-    attachInterrupt(digitalPinToInterrupt(4), ppsHandler, RISING);
 }
 
 void PTIT_GPS::update() {
