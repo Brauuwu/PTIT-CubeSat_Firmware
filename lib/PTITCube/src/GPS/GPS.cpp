@@ -1,11 +1,41 @@
 #include "GPS.h"
 
-PTIT_GPS::PTIT_GPS() : gpsSerial(2) {
+PTIT_GPS::PTIT_GPS() : gpsSerial(2), gpsSelectPin(12), camSelectPin(14), selectedDevice(Uart2Device::GPS) {
 }
 
-void PTIT_GPS::init() {
+void PTIT_GPS::init(uint8_t gpsSelectPin, uint8_t camSelectPin) {
+    this->gpsSelectPin = gpsSelectPin;
+    this->camSelectPin = camSelectPin;
+
+    pinMode(this->gpsSelectPin, OUTPUT);
+    pinMode(this->camSelectPin, OUTPUT);
+
+    digitalWrite(this->gpsSelectPin, HIGH);
+    digitalWrite(this->camSelectPin, LOW);
+    selectedDevice = Uart2Device::GPS;
+
     Serial.println("[GPS] Initializing GPS NEO (UART2)...");
     gpsSerial.begin(9600, SERIAL_8N1, 16, 17); // RX2=16, TX2=17
+}
+
+void PTIT_GPS::selectGPS() {
+    digitalWrite(gpsSelectPin, HIGH);
+    digitalWrite(camSelectPin, LOW);
+    selectedDevice = Uart2Device::GPS;
+}
+
+void PTIT_GPS::selectCamera() {
+    digitalWrite(gpsSelectPin, LOW);
+    digitalWrite(camSelectPin, HIGH);
+    selectedDevice = Uart2Device::CAMERA;
+}
+
+void PTIT_GPS::selectDevice(Uart2Device device) {
+    if (device == Uart2Device::GPS) {
+        selectGPS();
+    } else {
+        selectCamera();
+    }
 }
 
 void PTIT_GPS::update() {

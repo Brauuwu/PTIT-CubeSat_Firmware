@@ -6,9 +6,17 @@
 
 class PTIT_GPS {
 public:
+    enum class Uart2Device {
+        GPS,
+        CAMERA
+    };
+
     PTIT_GPS();
-    
-    void init();
+
+    void init(uint8_t gpsSelectPin = 12, uint8_t camSelectPin = 14);
+    void selectGPS();
+    void selectCamera();
+    void selectDevice(Uart2Device device);
     void update();
     float getLat();
     float getLng();
@@ -22,6 +30,9 @@ public:
 private:
     TinyGPSPlus gps;
     HardwareSerial gpsSerial;
+    uint8_t gpsSelectPin;
+    uint8_t camSelectPin;
+    Uart2Device selectedDevice;
 };
 
 #endif
