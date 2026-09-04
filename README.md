@@ -15,7 +15,7 @@ Dành cho các cảm biến MPU6050 (Gia tốc & Góc quay), BMP280 (Nhiệt đ�
 - **ESP32 SCK** -> Chân 18
 - **ESP32 MISO** -> Chân 19
 - **ESP32 MOSI** -> Chân 23
-- **ESP32 CS** -> Chân 15
+- **ESP32 CS** -> Chân 13
 
 ### 3. Phân hệ Định vị GPS NEO (UART2)
 - **ESP32 TX2 (Chân 17)** -> RX của GPS

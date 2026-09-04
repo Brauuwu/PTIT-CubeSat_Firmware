@@ -22,7 +22,7 @@
 #define HREF_GPIO_NUM     23
 #define PCLK_GPIO_NUM     22
 
-#define SD_CS_PIN 15
+#define SD_CS_PIN 13
 #define SD_SCK_PIN 18
 #define SD_MISO_PIN 19
 #define SD_MOSI_PIN 23
@@ -117,7 +117,7 @@ static bool saveFrameToSd(const camera_fb_t* fb, const char* path) {
         return false;
     }
 
-    if (!SD.begin(15, SPI, 8000000)) {
+    if (!SD.begin(SD_CS_PIN, SPI, 8000000)) {
         Serial.println("[Camera] MicroSD mount failed while saving image");
         return false;
     }
