@@ -29,7 +29,7 @@ Dành cho các cảm biến MPU6050 (Gia tốc & Góc quay), BMP280 (Nhiệt đ�
 - **ESP32 Chân 27** -> AUX của LoRa
 
 ### 5. Phân hệ Năng lượng (EPS)
-- **ESP32 Chân 34 (ADC)** -> Nối với cầu phân áp (2 điện trở 100k) để đo điện áp Pin (Battery Voltage).
+- **ESP32 Chân 5 (ADC)** -> Nối với cầu phân áp (2 điện trở 1.2k) để đo điện áp Pin (Battery Voltage).
 
 ---
 

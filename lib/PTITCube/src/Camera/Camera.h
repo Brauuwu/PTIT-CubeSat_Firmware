@@ -7,6 +7,7 @@ class PTIT_Camera {
 public:
     PTIT_Camera();
 
+    // Pass 255 for both pins when the camera runs as a standalone ESP32-CAM.
     bool init(uint8_t gpsSelectPin = 12, uint8_t camSelectPin = 14);
     void selectGPS();
     void selectCamera();

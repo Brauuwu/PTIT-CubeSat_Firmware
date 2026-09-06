@@ -1,6 +1,5 @@
 #include "Camera.h"
-#include <SPI.h>
-#include <SD.h>
+#include <SD_MMC.h>
 #include <esp_camera.h>
 
 #define CAMERA_MODEL_AI_THINKER
@@ -22,17 +21,11 @@
 #define HREF_GPIO_NUM     23
 #define PCLK_GPIO_NUM     22
 
-#define SD_CS_PIN 13
-#define SD_SCK_PIN 18
-#define SD_MISO_PIN 19
-#define SD_MOSI_PIN 23
-
 PTIT_Camera::PTIT_Camera() : gpsSelectPin(12), camSelectPin(14), cameraReady(false), sdReady(false) {
 }
 
 bool PTIT_Camera::initializeSd() {
-    SPI.begin(SD_SCK_PIN, SD_MISO_PIN, SD_MOSI_PIN, SD_CS_PIN);
-    if (!SD.begin(SD_CS_PIN, SPI, 8000000)) {
+    if (!SD_MMC.begin("/sdcard", true)) {
         Serial.println("[Camera] MicroSD mount failed");
         sdReady = false;
         return false;
@@ -85,11 +78,12 @@ bool PTIT_Camera::init(uint8_t gpsSelectPin, uint8_t camSelectPin) {
     this->gpsSelectPin = gpsSelectPin;
     this->camSelectPin = camSelectPin;
 
-    pinMode(this->gpsSelectPin, OUTPUT);
-    pinMode(this->camSelectPin, OUTPUT);
-
-    digitalWrite(this->gpsSelectPin, LOW);
-    digitalWrite(this->camSelectPin, HIGH);
+    if (gpsSelectPin != 255 && camSelectPin != 255) {
+        pinMode(this->gpsSelectPin, OUTPUT);
+        pinMode(this->camSelectPin, OUTPUT);
+        digitalWrite(this->gpsSelectPin, LOW);
+        digitalWrite(this->camSelectPin, HIGH);
+    }
 
     Serial.println("[Camera] Switching UART2 to ESP32-CAM...");
 
@@ -117,24 +111,19 @@ static bool saveFrameToSd(const camera_fb_t* fb, const char* path) {
         return false;
     }
 
-    if (!SD.begin(SD_CS_PIN, SPI, 8000000)) {
-        Serial.println("[Camera] MicroSD mount failed while saving image");
-        return false;
-    }
-
     String filePath = path;
     int lastSlash = filePath.lastIndexOf('/');
     if (lastSlash > 0) {
         String dirPath = filePath.substring(0, lastSlash);
-        if (!SD.exists(dirPath.c_str())) {
-            if (!SD.mkdir(dirPath.c_str())) {
+        if (!SD_MMC.exists(dirPath.c_str())) {
+            if (!SD_MMC.mkdir(dirPath.c_str())) {
                 Serial.println("[Camera] Failed to create folder: " + dirPath);
                 return false;
             }
         }
     }
 
-    File file = SD.open(path, FILE_WRITE);
+    File file = SD_MMC.open(path, FILE_WRITE);
     if (!file) {
         Serial.println("[Camera] Failed to open file for writing: " + String(path));
         return false;

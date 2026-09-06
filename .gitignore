@@ -1,2 +1,4 @@
 .pio
 .env
+.env.*
+!.env_example
