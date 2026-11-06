@@ -79,7 +79,7 @@ String processSystemCommand(String command) {
     }
     if (command == "get_gps")    return "GPS: Lat=" + String(gps.getLat(), 6) + ", Lng=" + String(gps.getLng(), 6) + ", Alt=" + String(gps.getAltitude(), 2) + "m";
     if (command == "get_sensor") return "Sensor: Temp=" + String(sensor.getTemperature(), 2) + "C, Press=" + String(sensor.getPressure(), 2) + "hPa";
-    if (command == "get_eps")    return "EPS: Battery=" + String(eps.getBatteryVoltage(), 2) + "V";
+    if (command == "get_eps")    return "EPS: Battery=" + String(eps.getBatteryVoltage(), 2) + "V (" + String(eps.getBatteryPercent(), 1) + "%)";
     if (command == "clear_log") {
         if (!PTIT_Scheduler::lock(PTIT_BUS_SPI, 200)) return "ERR: SD busy";
         String res = storage.removeFile("/datalog.txt") ? "Log cleared" : "ERR: rm /datalog.txt";
@@ -150,8 +150,9 @@ void telemetryLoop() {
     auto buildJson = [](const String& content) { return "{" + content + "}"; };
 
     float v = eps.getBatteryVoltage();
-    String epsMqtt = buildJson("\"battery_v\":" + String(v, 2));
-    String epsLora = buildJson("\"battery_v\":" + String(v, 3));
+    float pct = eps.getBatteryPercent();
+    String epsMqtt = buildJson("\"battery_v\":" + String(v, 2) + ",\"battery_pct\":" + String(pct, 1));
+    String epsLora = buildJson("\"battery_v\":" + String(v, 3) + ",\"pct\":" + String((int)pct));
 
     float t = sensor.getTemperature(), p = sensor.getPressure();
     String envMqtt = buildJson("\"temp\":" + String(t, 2) + ",\"pressure\":" + String(p, 2));
