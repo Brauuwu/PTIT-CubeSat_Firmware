@@ -12,6 +12,6 @@
     "adafruit/Adafruit MPU6050": "^2.2.6",
     "adafruit/Adafruit BMP280 Library": "^2.6.8",
     "adafruit/Adafruit QMC5883P Library": "^1.0.2",
-    "https://github.com/espressif/esp32-camera.git": "*"
+    "esp32-camera": "https://github.com/espressif/esp32-camera.git"
   }
 }
