@@ -24,8 +24,8 @@ void setup() {
     
     Serial.println("\n--- TEST CHUYỂN MẠCH CAMERA & GPS ---");
 
-    // Khởi tạo Camera (chân select GPS = 12, Camera = 14)
-    if (!camera.init(12, 14)) {
+    // Khởi tạo Camera
+    if (!camera.init()) {
         Serial.println("[Cảnh báo] Camera init có lỗi (Có thể chưa gắn thẻ nhớ).");
     }
 

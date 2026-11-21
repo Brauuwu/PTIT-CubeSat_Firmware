@@ -60,7 +60,7 @@ void setup() {
     Serial.println("OK");
 
     Serial.print("5. Khởi tạo Camera... ");
-    camera.init(12, 14); // Sử dụng chân chọn MUX
+    camera.init();
     Serial.println("OK");
 
     Serial.print("6. Khởi tạo COM (LoRa)... ");
