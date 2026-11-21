@@ -44,9 +44,9 @@ void cdhLoop() {
 // Sensor: Đọc cảm biến qua I2C (BMP280, MPU6050, QMC5883L)
 void sensorLoop() {
     if (isTelemetryPaused) return;
-    if (PTIT_Scheduler::lock(PTIT_BUS_I2C)) {
+    if (scheduler.lock(PTIT_BUS_I2C)) {
         sensor.update();
-        PTIT_Scheduler::unlock(PTIT_BUS_I2C);
+        scheduler.unlock(PTIT_BUS_I2C);
     }
 }
 
@@ -60,20 +60,20 @@ void gpsLoop() {
 // Xử lý các lệnh hệ thống (trả về chuỗi rỗng nếu không phải lệnh hệ thống)
 String processSystemCommand(String command) {
     if (command == "ping") {
-        PTIT_Scheduler::println("CMD: ping");
-        if (PTIT_Scheduler::lock(PTIT_BUS_LORA, 500)) {
+        scheduler.println("CMD: ping");
+        if (scheduler.lock(PTIT_BUS_LORA, 500)) {
             for (int i = 0; i < 4; i++) {
                 lora.sendMessage("ACK " + String(i + 1) + "/4");
                 delay(200);
             }
-            PTIT_Scheduler::unlock(PTIT_BUS_LORA);
+            scheduler.unlock(PTIT_BUS_LORA);
         }
         return "PING_HANDLED"; // Cờ đặc biệt để không gửi response chung
     }
     if (command == "reboot") {
-        PTIT_Scheduler::println("CMD: reboot");
-        if (PTIT_Scheduler::lock(PTIT_BUS_LORA, 500)) lora.sendMessage("Rebooting...");
-        PTIT_Scheduler::unlock(PTIT_BUS_LORA);
+        scheduler.println("CMD: reboot");
+        if (scheduler.lock(PTIT_BUS_LORA, 500)) lora.sendMessage("Rebooting...");
+        scheduler.unlock(PTIT_BUS_LORA);
         delay(500);
         ESP.restart();
     }
@@ -81,9 +81,9 @@ String processSystemCommand(String command) {
     if (command == "get_sensor") return "Sensor: Temp=" + String(sensor.getTemperature(), 2) + "C, Press=" + String(sensor.getPressure(), 2) + "hPa";
     if (command == "get_eps")    return "EPS: Battery=" + String(eps.getBatteryVoltage(), 2) + "V (" + String(eps.getBatteryPercent(), 1) + "%)";
     if (command == "clear_log") {
-        if (!PTIT_Scheduler::lock(PTIT_BUS_SPI, 200)) return "ERR: SD busy";
+        if (!scheduler.lock(PTIT_BUS_SPI, 200)) return "ERR: SD busy";
         String res = storage.removeFile("/datalog.txt") ? "Log cleared" : "ERR: rm /datalog.txt";
-        PTIT_Scheduler::unlock(PTIT_BUS_SPI);
+        scheduler.unlock(PTIT_BUS_SPI);
         return res;
     }
     if (command == "status") {
@@ -111,23 +111,23 @@ String processSystemCommand(String command) {
 // Hỗ trợ lệnh hệ thống + lệnh file/thư mục kiểu Linux
 void comLoop() {
     String cmd = "";
-    if (PTIT_Scheduler::lock(PTIT_BUS_LORA)) {
+    if (scheduler.lock(PTIT_BUS_LORA)) {
         cmd = lora.update();
-        PTIT_Scheduler::unlock(PTIT_BUS_LORA);
+        scheduler.unlock(PTIT_BUS_LORA);
     }
 
     if (cmd.length() > 0) {
         cmd.trim();
-        String command = PTIT_Utils::extractCommand(cmd);
+        String command = cdh.extractCommand(cmd);
         String response = processSystemCommand(command);
 
         if (response == "PING_HANDLED") return; // Lệnh ping đã tự xử lý
 
         // Nếu không phải lệnh hệ thống, chuyển cho SD Card xử lý
         if (response == "") {
-            if (PTIT_Scheduler::lock(PTIT_BUS_SPI, 200)) {
+            if (scheduler.lock(PTIT_BUS_SPI, 200)) {
                 response = storage.handleCommand(cmd);
-                PTIT_Scheduler::unlock(PTIT_BUS_SPI);
+                scheduler.unlock(PTIT_BUS_SPI);
             } else {
                 response = "ERR: SD busy";
             }
@@ -135,10 +135,10 @@ void comLoop() {
         }
 
         // Gửi phản hồi qua LoRa
-        PTIT_Scheduler::println("CMD: " + command + " → " + response);
-        if (PTIT_Scheduler::lock(PTIT_BUS_LORA, 500)) {
+        scheduler.println("CMD: " + command + " → " + response);
+        if (scheduler.lock(PTIT_BUS_LORA, 500)) {
             lora.sendMessage(response);
-            PTIT_Scheduler::unlock(PTIT_BUS_LORA);
+            scheduler.unlock(PTIT_BUS_LORA);
         }
     }
 }
@@ -174,13 +174,13 @@ void telemetryLoop() {
     String gpsMqtt = buildJson("\"lat\":" + String(lat, 6) + ",\"lng\":" + String(lng, 6));
     String gpsLora = buildJson("\"lat\":" + String(lat, 6) + ",\"lng\":" + String(lng, 6)); // GPS cần giữ độ phân giải 6 số
 
-    PTIT_Scheduler::println("TELEM: V=" + String(v, 2) + "V, T=" + String(t, 1) + "C, GPS=(" + String(lat, 4) + "," + String(lng, 4) + ")");
+    scheduler.println("TELEM: V=" + String(v, 2) + "V, T=" + String(t, 1) + "C, GPS=(" + String(lat, 4) + "," + String(lng, 4) + ")");
 
-    if (PTIT_Scheduler::lock(PTIT_BUS_SPI, 200)) {
+    if (scheduler.lock(PTIT_BUS_SPI, 200)) {
         storage.logData(epsMqtt.c_str()); storage.logData(envMqtt.c_str());
         storage.logData(accMqtt.c_str()); storage.logData(gyroMqtt.c_str());
         storage.logData(magMqtt.c_str()); storage.logData(gpsMqtt.c_str());
-        PTIT_Scheduler::unlock(PTIT_BUS_SPI);
+        scheduler.unlock(PTIT_BUS_SPI);
     }
 
     cdh.publishData("cubesat/telemetry/eps", epsMqtt.c_str());
@@ -192,9 +192,9 @@ void telemetryLoop() {
 
     auto sendLoraChunk = [&](const String& payload) {
         if (isTelemetryPaused) return;
-        if (PTIT_Scheduler::lock(PTIT_BUS_LORA, 200)) {
+        if (scheduler.lock(PTIT_BUS_LORA, 200)) {
             lora.sendMessage(payload);
-            PTIT_Scheduler::unlock(PTIT_BUS_LORA);
+            scheduler.unlock(PTIT_BUS_LORA);
         }
         delay(150);
     };
