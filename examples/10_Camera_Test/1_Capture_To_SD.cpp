@@ -46,7 +46,6 @@ void loop() {
 
         // Thực hiện chụp ảnh
         if (camera.captureToFile(path.c_str())) {
-            Serial.println("[Thành công] Đã lưu ảnh thành công.");
             imageCount++;
         } else {
             Serial.println("[Thất bại] Chụp hoặc lưu ảnh bị lỗi.");
