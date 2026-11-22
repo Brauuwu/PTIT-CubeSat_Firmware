@@ -16,7 +16,7 @@ void setup() {
     if (storage.isReady()) {
         Serial.println("SD Card da san sang (go 'help' de xem danh sach lenh)");
     } else {
-        Serial.println("LOI: Khong tim thay the SD.");
+        Serial.println("Storage: SD not ready");
     }
 }
 

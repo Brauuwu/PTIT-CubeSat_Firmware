@@ -27,7 +27,7 @@ void setup() {
     // Khởi tạo Camera và SD card bên trong module
     // Hàm init mặc định: gpsSelectPin = 12, camSelectPin = 14
     if (!camera.init()) {
-        Serial.println("[Lỗi] Không thể khởi tạo Camera hoặc Thẻ nhớ!");
+        Serial.println("Camera: Init failed");
         while (1) {
             delay(1000); // Dừng hệ thống nếu lỗi
         }

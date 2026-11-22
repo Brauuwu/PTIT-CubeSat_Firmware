@@ -26,7 +26,7 @@ void setup() {
 
     // Khởi tạo Camera
     if (!camera.init()) {
-        Serial.println("[Cảnh báo] Camera init có lỗi (Có thể chưa gắn thẻ nhớ).");
+        Serial.println("Camera: Init warning (SD not mounted)");
     }
 
     // Khởi tạo GPS
