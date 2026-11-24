@@ -12,8 +12,8 @@
  */
 
 #include <Arduino.h>
-#include "Camera/Camera.h"
-#include "Storage/Storage.h" // Sử dụng Storage để hỗ trợ kiểm tra file nếu cần
+#include "MUX/Camera.h"
+#include "CDH/Storage.h" // Sử dụng Storage để hỗ trợ kiểm tra file nếu cần
 
 PTIT_Camera camera;
 int imageCount = 0;

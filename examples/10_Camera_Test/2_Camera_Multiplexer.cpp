@@ -11,8 +11,8 @@
  */
 
 #include <Arduino.h>
-#include "Camera/Camera.h"
-#include "GPS/GPS.h"
+#include "MUX/Camera.h"
+#include "MUX/GPS.h"
 
 // Khởi tạo các phân hệ
 PTIT_Camera camera;

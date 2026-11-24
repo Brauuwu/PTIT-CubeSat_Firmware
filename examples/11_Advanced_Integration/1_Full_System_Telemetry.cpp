@@ -20,9 +20,9 @@
 
 #include "EPS/EPS.h"
 #include "Sensor/Sensor.h"
-#include "GPS/GPS.h"
-#include "Camera/Camera.h"
-#include "Storage/Storage.h"
+#include "MUX/GPS.h"
+#include "MUX/Camera.h"
+#include "CDH/Storage.h"
 #include "COM/COM.h"
 
 // Khởi tạo các phân hệ

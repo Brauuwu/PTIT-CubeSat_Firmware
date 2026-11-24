@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <Camera/Camera.h>
+#include <MUX/Camera.h>
 
 PTIT_Camera camera;
 unsigned long captureNumber = 0;

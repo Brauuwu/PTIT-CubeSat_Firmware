@@ -41,7 +41,7 @@ void cdhLoop() {
     cdh.update();
 }
 
-// Sensor: Đọc cảm biến qua I2C (BMP280, MPU6050, QMC5883L)
+// Sensor: Đọc cảm biến qua I2C (BMP280, MPU6500, QMC5883L)
 void sensorLoop() {
     if (isTelemetryPaused) return;
     if (scheduler.lock(PTIT_BUS_I2C)) {

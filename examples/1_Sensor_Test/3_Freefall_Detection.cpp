@@ -3,7 +3,7 @@
  * 
  * Mô tả:
  * Khi một vật thể rơi tự do, gia tốc đo được theo tất cả các trục (X, Y, Z) 
- * sẽ tiến gần về 0 (0g). Ví dụ này theo dõi gia tốc trục X từ MPU6050 để 
+ * sẽ tiến gần về 0 (0g). Ví dụ này theo dõi gia tốc trục X từ MPU6500 để 
  * cảnh báo khi vệ tinh hoặc thiết bị đang trong trạng thái không trọng lượng.
  * 
  * Lưu ý: API getAccX() trả về gia tốc theo m/s^2. Trọng lực Trái đất là ~9.81 m/s^2.

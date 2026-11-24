@@ -5,7 +5,7 @@
 ## Sơ đồ kết nối chân (Pinout)
 
 ### 1. Phân hệ Cảm biến (I2C)
-Dành cho các cảm biến MPU6050 (Gia tốc & Góc quay), BMP280 (Nhiệt độ/Áp suất), GY-271 (La bàn từ trường QMC5883P / HMC5883L):
+Dành cho các cảm biến MPU6500 (Gia tốc & Góc quay), BMP280 (Nhiệt độ/Áp suất), GY-271 (La bàn từ trường QMC5883P / HMC5883L):
 - **ESP32 SDA** -> Chân 21
 - **ESP32 SCL** -> Chân 22
 
@@ -40,7 +40,7 @@ Project quản lý thư viện tự động qua PlatformIO (`platformio.ini`). D
 2. **`knolleary/PubSubClient @ ^2.8`**: Giao thức MQTT để gửi Telemetry về máy chủ.
 3. **`bblanchon/ArduinoJson @ ^7.1.0`**: Đóng gói/giải mã dữ liệu dạng JSON.
 4. **`mikalhart/TinyGPSPlus @ ^1.0.3`**: Đọc và bóc tách gói tin chuẩn NMEA từ module GPS.
-5. **`adafruit/Adafruit MPU6050 @ ^2.2.6`**: Đọc dữ liệu gia tốc kế & con quay 6 trục MPU6050.
+5. **`electroniccats/MPU6500`** hoặc driver I2C thanh ghi trực tiếp: Đọc dữ liệu gia tốc kế & con quay 6 trục MPU6500.
 6. **`adafruit/Adafruit BMP280 Library @ ^2.6.8`**: Đọc áp suất và nhiệt độ từ BMP280.
 7. **`adafruit/Adafruit QMC5883P Library @ ^1.0.2`**: Đọc la bàn từ trường cho mạch GY-271 (đã vá lỗi I2C).
 8. **`xreef/EByte LoRa E32 library @ ^1.5.13`**: Giao tiếp vô tuyến đường dài cho LoRa E32.
@@ -54,7 +54,7 @@ Kiến trúc phần mềm được chia thành các hệ thống con độc lậ
 - `EPS`: Quản lý năng lượng (Nguồn).
 - `CDH`: Xử lý trung tâm, WiFi (AP fallback), MQTT.
 - `COM`: Viễn thông LoRa E32 (Tích hợp cơ chế cắt nhỏ gói tin Chunking để chống ngợp băng thông LoRa).
-- `Sensor`: Các cảm biến (MPU6050, BMP280, GY-271).
+- `Sensor`: Các cảm biến (MPU6500, BMP280, GY-271).
 - `GPS`: Định vị vệ tinh.
 - `Storage`: Lưu trữ thẻ nhớ MicroSD với hệ thống file tựa Linux.
 - `Camera`: Module chụp ảnh.
