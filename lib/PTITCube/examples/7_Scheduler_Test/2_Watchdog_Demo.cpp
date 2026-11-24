@@ -14,7 +14,7 @@ PTIT_Scheduler scheduler;
 
 // Task bình thường
 void normalTask() {
-    PTIT_Scheduler::println("[Normal] Task này vẫn sống và hoạt động đều đặn.");
+    scheduler.println("[Normal] Task này vẫn sống và hoạt động đều đặn.");
 }
 
 // Task lỗi: Sẽ bị treo sau 10 giây
@@ -23,14 +23,14 @@ void stuckTask() {
     unsigned long elapsed = millis() - startTime;
 
     if (elapsed > 10000) {
-        PTIT_Scheduler::println("\n[ERROR] stuckTask bắt đầu bị kẹt trong vòng lặp vô hạn!");
+        scheduler.println("\n[ERROR] stuckTask bắt đầu bị kẹt trong vòng lặp vô hạn!");
         // Treo hệ thống (simulate lỗi I2C timeout hoặc lỗi logic)
         while (true) {
             // Không bao giờ thoát khỏi đây!
             delay(10); 
         }
     } else {
-        PTIT_Scheduler::println("[StuckTask] Còn " + String(10 - elapsed/1000) + " giây nữa là bị treo.");
+        scheduler.println("[StuckTask] Còn " + String(10 - elapsed/1000) + " giây nữa là bị treo.");
     }
 }
 

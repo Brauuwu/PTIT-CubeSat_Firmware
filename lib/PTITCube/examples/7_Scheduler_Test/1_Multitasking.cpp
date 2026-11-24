@@ -23,20 +23,20 @@ void ledTask() {
 // Task 2: Đọc cảm biến giả lập (chạy mỗi 1 giây)
 void readSensorTask() {
     // PTIT_BUS_SERIAL là ID mutex dùng chung để khoá truy cập Serial
-    if (PTIT_Scheduler::lock(PTIT_BUS_SERIAL, 100)) {
+    if (scheduler.lock(PTIT_BUS_SERIAL, 100)) {
         Serial.println("[Sensor] Đang đọc dữ liệu... Nhiệt độ: 28.5C");
-        PTIT_Scheduler::unlock(PTIT_BUS_SERIAL);
+        scheduler.unlock(PTIT_BUS_SERIAL);
     }
 }
 
 // Task 3: Gửi dữ liệu giả lập (chạy mỗi 3 giây, tốn nhiều thời gian)
 void networkTask() {
-    if (PTIT_Scheduler::lock(PTIT_BUS_SERIAL, 200)) {
+    if (scheduler.lock(PTIT_BUS_SERIAL, 200)) {
         Serial.println("[Network] BẮT ĐẦU gửi dữ liệu lên máy chủ...");
         // Giữ mutex trong 500ms để giả lập thời gian truyền dữ liệu chậm
         delay(500); 
         Serial.println("[Network] ĐÃ GỬI XONG!");
-        PTIT_Scheduler::unlock(PTIT_BUS_SERIAL);
+        scheduler.unlock(PTIT_BUS_SERIAL);
     }
 }
 

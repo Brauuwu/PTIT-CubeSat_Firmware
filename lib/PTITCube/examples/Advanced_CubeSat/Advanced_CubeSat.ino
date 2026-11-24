@@ -27,9 +27,9 @@ bool isTelemetryPaused = false;
 // ============================================================================
 void sensorLoop() {
     if (isTelemetryPaused) return;
-    if (PTIT_Scheduler::lock(PTIT_BUS_I2C)) {
+    if (scheduler.lock(PTIT_BUS_I2C)) {
         sensor.update();
-        PTIT_Scheduler::unlock(PTIT_BUS_I2C);
+        scheduler.unlock(PTIT_BUS_I2C);
     }
 }
 
@@ -40,14 +40,17 @@ void gpsLoop() {
 
 void comLoop() {
     String cmd = "";
-    if (PTIT_Scheduler::lock(PTIT_BUS_LORA)) {
+    if (scheduler.lock(PTIT_BUS_LORA)) {
         cmd = lora.update();
-        PTIT_Scheduler::unlock(PTIT_BUS_LORA);
+        scheduler.unlock(PTIT_BUS_LORA);
     }
 
     if (cmd.length() > 0) {
         cmd.trim();
-        String command = PTIT_Utils::extractCommand(cmd);
+        String command = cmd;
+        int spaceIdx = command.indexOf(' ');
+        if (spaceIdx > 0) command = command.substring(0, spaceIdx);
+        command.toLowerCase();
         String response = "";
 
         if (command == "ping") response = "Pong!";
@@ -55,9 +58,9 @@ void comLoop() {
         else if (command == "resume") { isTelemetryPaused = false; response = "RESUMED"; }
         else if (command == "status") response = "Bat: " + String(eps.getBatteryVoltage(), 1) + "V";
         
-        if (response.length() > 0 && PTIT_Scheduler::lock(PTIT_BUS_LORA, 500)) {
+        if (response.length() > 0 && scheduler.lock(PTIT_BUS_LORA, 500)) {
             lora.sendMessage(response);
-            PTIT_Scheduler::unlock(PTIT_BUS_LORA);
+            scheduler.unlock(PTIT_BUS_LORA);
         }
     }
 }
@@ -69,18 +72,18 @@ void telemetryLoop() {
     String epsJson = "{\"battery_v\":" + String(eps.getBatteryVoltage(), 2) + "}";
     
     // Ghi SD Card
-    if (PTIT_Scheduler::lock(PTIT_BUS_SPI, 200)) {
+    if (scheduler.lock(PTIT_BUS_SPI, 200)) {
         storage.logData(epsJson.c_str());
-        PTIT_Scheduler::unlock(PTIT_BUS_SPI);
+        scheduler.unlock(PTIT_BUS_SPI);
     }
 
     // MQTT
     cdh.publishData("cubesat/eps", epsJson.c_str());
 
     // LoRa RF (Gửi chia nhỏ để nhường bus)
-    if (PTIT_Scheduler::lock(PTIT_BUS_LORA, 200)) {
+    if (scheduler.lock(PTIT_BUS_LORA, 200)) {
         lora.sendMessage(epsJson);
-        PTIT_Scheduler::unlock(PTIT_BUS_LORA);
+        scheduler.unlock(PTIT_BUS_LORA);
     }
 }
 

@@ -19,9 +19,9 @@ const float TEMP_CRITICAL = 45.0; // Độ C
 const float FREEFALL_G    = 1.0;  // m/s^2 (gia tốc gần 0)
 
 void anomalyDetectionTask() {
-    if (PTIT_Scheduler::lock(PTIT_BUS_I2C, 100)) {
+    if (scheduler.lock(PTIT_BUS_I2C, 100)) {
         sensor.update();
-        PTIT_Scheduler::unlock(PTIT_BUS_I2C);
+        scheduler.unlock(PTIT_BUS_I2C);
     }
 
     float t = sensor.getTemperature();
@@ -44,11 +44,11 @@ void anomalyDetectionTask() {
 
     // NẾU CÓ SỰ CỐ -> GỬI LORA NGAY LẬP TỨC
     if (isEmergency) {
-        PTIT_Scheduler::println("\n[SỰ CỐ] " + alertMsg);
+        scheduler.println("\n[SỰ CỐ] " + alertMsg);
         
-        if (PTIT_Scheduler::lock(PTIT_BUS_LORA, 200)) {
+        if (scheduler.lock(PTIT_BUS_LORA, 200)) {
             lora.sendMessage(alertMsg);
-            PTIT_Scheduler::unlock(PTIT_BUS_LORA);
+            scheduler.unlock(PTIT_BUS_LORA);
         }
     }
 }

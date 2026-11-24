@@ -4,15 +4,20 @@ Thư viện lõi hỗ trợ lập trình cho dự án vệ tinh **PTITCube** (Cu
 
 ## Cấu trúc thư viện
 
-Thư viện được chia thành các module (subsystems) chính:
+Thư viện được module hóa thành 5 phân hệ phần cứng và phần mềm tiêu chuẩn:
 
-- **Scheduler (FreeRTOS):** Trái tim của hệ thống. Bộ quản lý đa luồng giúp chạy độc lập các tác vụ đo lường, viễn thông và điều khiển với cơ chế khoá tài nguyên an toàn (Mutex lock).
-- **CDH (Command and Data Handling):** Khối xử lý lệnh trung tâm, tự động kết nối WiFi và phát dữ liệu Telemetry chuẩn MQTT.
-- **COM (Communication):** Khối giao tiếp vô tuyến LoRa E32, hỗ trợ truyền/nhận lệnh điều khiển ở khoảng cách xa với cơ chế chống nghẽn và cắt nhỏ gói tin (Chunking) thông minh.
-- **EPS (Electrical Power System):** Khối quản lý năng lượng, giám sát điện áp và dung lượng pin.
-- **Sensor:** Khối thu thập dữ liệu đa chiều từ các cảm biến: nhiệt độ, áp suất (BMP280), gia tốc, con quay hồi chuyển (MPU6500), la bàn từ trường (QMC5883L / GY271).
-- **GPS:** Module định vị vệ tinh cung cấp tọa độ (Kinh độ, Vĩ độ) và cao độ.
-- **Storage:** Module quản lý thẻ nhớ SD với các lệnh phân cấp cây thư mục tựa Linux (pwd, cd, ls, mkdir, rm, touch).
+- **CDH (Command and Data Handling):** Trung tâm xử lý lệnh và lưu trữ dữ liệu, gồm:
+  - `CDH`: Điều phối chính, kết nối WiFi & xuất bản Telemetry MQTT.
+  - `Storage`: Quản lý thẻ nhớ MicroSD với hệ thống lệnh Linux shell (`ls`, `cat`, `mkdir`, `df`, `rm`).
+  - `Scheduler`: Bộ lập lịch đa nhiệm FreeRTOS và Bus Mutex bảo vệ an toàn xung đột tài nguyên.
+  - `WDT`: Watchdog Timer tự động giám sát chống treo hệ thống.
+- **MUX (Multiplexer & Trọng tải hình ảnh/định vị):** Điều phối chuyển mạch phần cứng 74HC4066 Break-Before-Make trên UART2:
+  - `MUX`: Quản lý chuyển mạch an toàn.
+  - `Camera`: Giao thức chụp ảnh ESP32-CAM và lưu vào thẻ nhớ.
+  - `GPS`: Định vị vệ tinh NMEA và giải mã TinyGPS++.
+- **COM (Communication):** Phân hệ truyền thông vô tuyến LoRa E32, hỗ trợ truyền/nhận lệnh từ trạm mặt đất, chống nghẽn và cắt gói (chunking).
+- **EPS (Electrical Power System):** Quản lý năng lượng, mạch hạ áp (Power Gating), giám sát điện áp và dung lượng pin.
+- **Sensor:** Khối thu thập dữ liệu đa chiều từ các cảm biến: nhiệt độ, áp suất (BMP280), gia tốc, con quay hồi chuyển 6 trục (MPU6500), la bàn từ trường (QMC5883L / GY-271).
 
 ## Cơ chế Đa Luồng (FreeRTOS Scheduler)
 Hệ thống sử dụng `PTIT_Scheduler` để chạy song song các luồng (Loop) riêng biệt:
