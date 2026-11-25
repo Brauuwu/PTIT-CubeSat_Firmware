@@ -47,20 +47,29 @@ void PTIT_EPS::update() {
     if (Wire.endTransmission() == 0) {
         sensorReady = true;
         uint16_t rawV = readRegister16(MAX17048_REG_VCELL);
-        if (rawV > 0) {
+        if (rawV > 0 && sensorReady) {
             lastVoltage = (float)rawV * 0.000078125f;
+        } else {
+            lastVoltage = 0.0f;
+            sensorReady = false;
         }
         uint16_t rawS = readRegister16(MAX17048_REG_SOC);
-        if (rawS > 0) {
+        if (rawS > 0 && sensorReady) {
             float percent = (float)rawS / 256.0f;
             if (percent > 100.0f) percent = 100.0f;
             if (percent < 0.0f) percent = 0.0f;
             lastPercent = percent;
+        } else {
+            lastPercent = 0.0f;
+            sensorReady = false;
         }
         int16_t rawC = (int16_t)readRegister16(MAX17048_REG_CRATE);
         lastRate = (float)rawC * 0.208f;
     } else {
         sensorReady = false;
+        lastVoltage = 0.0f;
+        lastPercent = 0.0f;
+        lastRate = 0.0f;
     }
 
     // Nếu trước đó Buck đang ngắt để tiết kiệm năng lượng, trả về trạng thái ngắt ban đầu
@@ -70,16 +79,10 @@ void PTIT_EPS::update() {
 }
 
 float PTIT_EPS::getBatteryVoltage() {
-    if (lastVoltage <= 0.5f) {
-        update();
-    }
     return lastVoltage;
 }
 
 float PTIT_EPS::getBatteryPercent() {
-    if (lastPercent <= 0.0f && lastVoltage <= 0.5f) {
-        update();
-    }
     return lastPercent;
 }
 
