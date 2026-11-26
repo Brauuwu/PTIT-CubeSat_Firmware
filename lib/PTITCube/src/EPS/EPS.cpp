@@ -64,7 +64,7 @@ void PTIT_EPS::update() {
             sensorReady = false;
         }
         int16_t rawC = (int16_t)readRegister16(MAX17048_REG_CRATE);
-        lastRate = (float)rawC * 0.208f;
+        lastRate = sensorReady ? ((float)rawC * 0.208f) : 0.0f;
     } else {
         sensorReady = false;
         lastVoltage = 0.0f;
@@ -79,11 +79,11 @@ void PTIT_EPS::update() {
 }
 
 float PTIT_EPS::getBatteryVoltage() {
-    return lastVoltage;
+    return sensorReady ? lastVoltage : 0.0f;
 }
 
 float PTIT_EPS::getBatteryPercent() {
-    return lastPercent;
+    return sensorReady ? lastPercent : 0.0f;
 }
 
 float PTIT_EPS::getBatteryPercentage() {
@@ -91,7 +91,7 @@ float PTIT_EPS::getBatteryPercentage() {
 }
 
 float PTIT_EPS::getChargeRate() {
-    return lastRate;
+    return sensorReady ? lastRate : 0.0f;
 }
 
 bool PTIT_EPS::isConnected() const {
